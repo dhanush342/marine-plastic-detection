@@ -1,0 +1,6 @@
+train: ./yolo5/train/images
+val: ./yolo5/valid/images
+test: ./yolo5/test/images
+
+nc: 1
+names: ['trash_plastic']

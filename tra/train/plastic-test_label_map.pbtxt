@@ -1,0 +1,5 @@
+item {
+    name: "trash_plastic",
+    id: 1,
+    display_name: "trash_plastic"
+}

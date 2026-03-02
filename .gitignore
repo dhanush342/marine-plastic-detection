@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Dataset cache
+*.cache
+
+# Model weights (too large for git)
+*.weights
+*.pt
+*.onnx
+
+# Archives
+*.zip
+*.tar.gz
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary
+*.tmp
+*.log
