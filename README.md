@@ -151,20 +151,3 @@ The model achieves high precision in detecting floating plastic debris across di
     archivePrefix={arXiv},
     primaryClass={cs.CV}
 }
-```
-
----
-
-## License
-
-This project is licensed under the MIT License - see [LICENSE](DeepPlastic-master/LICENSE) for details.
-
-## Resources
-
-- **Dataset Download:** [Google Drive](https://drive.google.com/drive/folders/1fsS_u2QpbRGynYkP6-D6cfvq8r0hpjXI?usp=sharing)
-- **arXiv Paper:** [2105.01882](https://arxiv.org/abs/2105.01882)
-- **Original Repository:** [gautamtata/DeepPlastic](https://github.com/gautamtata/DeepPlastic)
-=======
-# marine-plastic-detection
-A deep learning-based plastic detection system using YOLOv4 and YOLOv5 models.  This project provides trained models and datasets for identifying and classifying  plastic waste in images, supporting environmental monitoring and waste management efforts.
->>>>>>> db9495a91320249e3b29778fced90bd2107ce216
