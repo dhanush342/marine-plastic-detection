@@ -12,13 +12,11 @@
 ## 📋 Table of Contents
 
 - [Overview](#overview)
-- [System Architecture](#system-architecture)
 - [Project Structure](#project-structure)
 - [Dataset - DeepTrash](#dataset---deeptrash)
 - [Models & Performance](#models--performance)
 - [Installation](#installation)
 - [Usage](#usage)
-- [API Documentation](#api-documentation)
 - [Web Interface](#web-interface)
 - [Training Custom Models](#training-custom-models)
 - [Results & Metrics](#results--metrics)
