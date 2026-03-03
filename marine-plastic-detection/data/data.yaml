@@ -1,0 +1,10 @@
+train: 
+  - data/train
+valid: 
+  - data/valid
+test: 
+  - data/test
+nc: 2
+names: 
+  - plastic
+  - non_plastic

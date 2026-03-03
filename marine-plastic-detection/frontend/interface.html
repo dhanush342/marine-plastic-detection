@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marine Plastic Detection</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Marine Plastic Detection</h1>
+        <div class="upload-section">
+            <h2>Upload Image or Video</h2>
+            <input type="file" id="fileInput" accept="image/*,video/*">
+            <button id="uploadButton">Upload</button>
+        </div>
+        <div class="result-section">
+            <h2>Detection Results</h2>
+            <div id="results"></div>
+        </div>
+        <div class="real-time-section">
+            <h2>Real-Time Detection</h2>
+            <video id="videoInput" width="640" height="480" autoplay></video>
+            <button id="startDetectionButton">Start Detection</button>
+            <button id="stopDetectionButton">Stop Detection</button>
+        </div>
+    </div>
+    <script src="static/js/script.js"></script>
+</body>
+</html>
