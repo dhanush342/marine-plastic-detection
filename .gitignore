@@ -30,6 +30,14 @@ desktop.ini
 .vscode/
 .idea/
 
+# Dataset image and annotation files
+*.jpg
+*.jpeg
+*.png
+*.tfrecord
+*.pbtxt
+_darknet.labels
+
 # Temporary
 *.tmp
 *.log
