@@ -453,7 +453,7 @@ def writetemplate(line, cell):
 
 #check the cv2 version, another key component of darknet
 import cv2
-cv2.__version__
+print(cv2.__version__)
 
 # Only Run to retrain the Yolov4-Tiny network from Scratch!
 !wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.conv.29
