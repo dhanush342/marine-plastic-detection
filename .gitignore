@@ -33,3 +33,4 @@ desktop.ini
 # Temporary
 *.tmp
 *.log
+mock_train/

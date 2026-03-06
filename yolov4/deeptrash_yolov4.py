@@ -121,14 +121,14 @@ with open('data/obj.data', 'w') as out:
 import os
 
 with open('data/train.txt', 'w') as out:
-  for img in [f for f in os.listdir('train') if f.endswith('jpg')]:
+  for img in (f.name for f in os.scandir('train') if f.name.endswith('jpg')):
     out.write('data/obj/' + img + '\n')
 
 #write the valid file (just the image list)
 import os
 
 with open('data/valid.txt', 'w') as out:
-  for img in [f for f in os.listdir('valid') if f.endswith('jpg')]:
+  for img in (f.name for f in os.scandir('valid') if f.name.endswith('jpg')):
     out.write('data/obj/' + img + '\n')
 
 #we build config dynamically based on number of classes
