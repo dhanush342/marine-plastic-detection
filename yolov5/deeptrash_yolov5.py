@@ -131,16 +131,16 @@ def writetemplate(line, cell):
 # This is a hack to keep Google Colab from kicking you out. Paste this in the console when you start training. This will click a button with an Id on this page and therefore you won't be considered Idle.
 
 # P.S do not close the console.
-``` 
-function ClickConnect(){
-console.log("Working"); 
-document
-  .querySelector('#top-toolbar > colab-connect-button')
-  .shadowRoot.querySelector('#connect')
-  .click() 
-}
-setInterval(ClickConnect,60000)
-```
+# ```
+# function ClickConnect(){
+# console.log("Working");
+# document
+#   .querySelector('#top-toolbar > colab-connect-button')
+#   .shadowRoot.querySelector('#connect')
+#   .click()
+# }
+# setInterval(ClickConnect,60000)
+# ```
 
 """# Train Custom YOLOv5 Detector
 
