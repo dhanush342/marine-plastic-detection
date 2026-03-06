@@ -21,8 +21,6 @@ from utils.google_utils import gdrive_download  # to download models/datasets
 clear_output()
 print('Setup complete. Using torch %s %s' % (torch.__version__, torch.cuda.get_device_properties(0) if torch.cuda.is_available() else 'CPU'))
 
-print('Setup complete. Using torch %s %s' % (torch.__version__, torch.cuda.get_device_properties(0) if torch.cuda.is_available() else 'CPU'))
-
 # Commented out IPython magic to ensure Python compatibility.
 # Important Step : Mount Google Drive to have access to dataset/weights/config etc
 # Rename google drive to mydrive to make it easier to access
