@@ -162,7 +162,11 @@ from IPython.core.magic import register_line_cell_magic
 @register_line_cell_magic
 def writetemplate(line, cell):
     with open(line, 'w') as f:
-        f.write(cell.format(**globals()))
+        f.write(cell.format(**{
+            'num_classes': globals().get('num_classes'),
+            'steps_str': globals().get('steps_str'),
+            'num_filters': globals().get('num_filters')
+        }))
 
 # Commented out IPython magic to ensure Python compatibility.
 # %%writetemplate ./cfg/custom-yolov4-tiny-detector.cfg
