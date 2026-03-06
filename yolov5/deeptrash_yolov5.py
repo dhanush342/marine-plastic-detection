@@ -74,7 +74,7 @@ from IPython.core.magic import register_line_cell_magic
 @register_line_cell_magic
 def writetemplate(line, cell):
     with open(line, 'w') as f:
-        f.write(cell.format(**globals()))
+        f.write(cell.format(**{'num_classes': globals().get('num_classes')}))
 
 # Commented out IPython magic to ensure Python compatibility.
 # %%writetemplate /content/yolov5/models/custom_yolov5s.yaml
