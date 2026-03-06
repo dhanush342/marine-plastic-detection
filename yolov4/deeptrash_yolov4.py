@@ -461,16 +461,16 @@ cv2.__version__
 # This is a hack to keep Google Colab from kicking you out. Paste this in the console when you start training. This will click a button with an Id on this page and therefore you won't be considered Idle.
 
 # P.S do not close the console.
-``` 
-function ClickConnect(){
-console.log("Working"); 
-document
-  .querySelector('#top-toolbar > colab-connect-button')
-  .shadowRoot.querySelector('#connect')
-  .click() 
-}
-setInterval(ClickConnect,60000)
-```
+# ```
+# function ClickConnect(){
+# console.log("Working");
+# document
+#   .querySelector('#top-toolbar > colab-connect-button')
+#   .shadowRoot.querySelector('#connect')
+#   .click()
+# }
+# setInterval(ClickConnect,60000)
+# ```
 
 # train your custom detector! (uncomment %%capture below if you run into memory issues or your Colab is crashing)
 # %%capture
