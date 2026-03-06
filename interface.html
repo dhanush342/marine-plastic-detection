@@ -166,7 +166,8 @@
 <span class="material-symbols-outlined text-5xl text-accent mb-4 group-hover:scale-110 transition-transform">cloud_upload</span>
 <h4 class="text-lg font-bold mb-2">Drag &amp; Drop Media</h4>
 <p class="text-sm text-slate-500 mb-6">Supports MP4, MOV, JPG, PNG (Max 50MB)</p>
-<button class="bg-white text-primary px-6 py-2 rounded-lg font-bold hover:bg-accent transition-colors">Choose Files</button>
+<input type="file" id="fileInput" accept="image/*" class="hidden">
+<button class="bg-white text-primary px-6 py-2 rounded-lg font-bold hover:bg-accent transition-colors" onclick="document.getElementById('fileInput').click()">Choose Files</button>
 </div>
 <div class="mt-8 flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
 <div class="flex -space-x-2">
@@ -177,15 +178,17 @@
 <p class="text-xs text-slate-400">12,400+ files processed today</p>
 </div>
 </div>
-<div class="bg-slate-900 rounded-2xl aspect-square overflow-hidden border border-white/5 relative">
-<div class="absolute inset-0 flex items-center justify-center flex-col gap-4">
+<div class="bg-slate-900 rounded-2xl aspect-square overflow-hidden border border-white/5 relative" id="previewContainer">
+<div class="absolute inset-0 flex items-center justify-center flex-col gap-4" id="loadingState" style="display: none;">
 <div class="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
-<p class="text-sm font-mono text-accent animate-pulse">ANALYZING STREAM...</p>
+<p class="text-sm font-mono text-accent animate-pulse">ANALYZING IMAGE...</p>
 </div>
-<div class="absolute bottom-4 left-4 right-4 flex flex-col gap-2">
+<img id="previewImage" style="display: none; width: 100%; height: 100%; object-fit: contain;">
+<canvas id="boxesCanvas" style="position: absolute; top: 0; left: 0; pointer-events: none; width: 100%; height: 100%;"></canvas>
+<div class="absolute bottom-4 left-4 right-4 flex flex-col gap-2" id="resultsOverlay" style="display: none;">
 <div class="flex justify-between text-[10px] font-mono text-slate-400 uppercase">
-<span>Inference Time: 12ms</span>
-<span>Objects: 14</span>
+<span id="inferenceTime">Inference Time: -</span>
+<span id="objectCount">Objects: -</span>
 </div>
 <div class="w-full bg-white/10 h-1 rounded-full overflow-hidden">
 <div class="bg-accent h-full w-2/3"></div>
@@ -442,4 +445,98 @@
 </div>
 </div>
 </footer>
+<script>
+document.getElementById('fileInput').addEventListener('change', async function(e) {
+    if (this.files && this.files[0]) {
+        const file = this.files[0];
+
+        // Show image
+        const img = document.getElementById('previewImage');
+        const imgUrl = URL.createObjectURL(file);
+        img.src = imgUrl;
+        img.style.display = 'block';
+
+        // Clear previous state
+        const canvas = document.getElementById('boxesCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        document.getElementById('loadingState').style.display = 'flex';
+        document.getElementById('resultsOverlay').style.display = 'none';
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('/api/v1/detect', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('resultsOverlay').style.display = 'flex';
+
+            if (data.status === 'success') {
+                document.getElementById('inferenceTime').textContent = `Inference Time: ${data.inference_time_ms.toFixed(1)}ms`;
+                document.getElementById('objectCount').textContent = `Objects: ${data.detections.length}`;
+
+                // Set canvas size to match image intrinsic dimensions for coordinate mapping
+                // Wait for image to load to get dimensions
+                img.onload = function() {
+                    // Match canvas to the container size
+                    canvas.width = img.clientWidth;
+                    canvas.height = img.clientHeight;
+
+                    // Calculate object-fit: contain scaling and offsets
+                    const imgRatio = img.naturalWidth / img.naturalHeight;
+                    const containerRatio = canvas.width / canvas.height;
+
+                    let drawWidth, drawHeight, offsetX, offsetY;
+
+                    if (imgRatio > containerRatio) {
+                        drawWidth = canvas.width;
+                        drawHeight = canvas.width / imgRatio;
+                        offsetX = 0;
+                        offsetY = (canvas.height - drawHeight) / 2;
+                    } else {
+                        drawWidth = canvas.height * imgRatio;
+                        drawHeight = canvas.height;
+                        offsetX = (canvas.width - drawWidth) / 2;
+                        offsetY = 0;
+                    }
+
+                    const scaleX = drawWidth / img.naturalWidth;
+                    const scaleY = drawHeight / img.naturalHeight;
+
+                    data.detections.forEach(det => {
+                        const [x1, y1, x2, y2] = det.bbox;
+
+                        // Map coordinates to canvas
+                        const cx1 = x1 * scaleX + offsetX;
+                        const cy1 = y1 * scaleY + offsetY;
+                        const cx2 = x2 * scaleX + offsetX;
+                        const cy2 = y2 * scaleY + offsetY;
+
+                        ctx.strokeStyle = '#00f5ff';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(cx1, cy1, cx2 - cx1, cy2 - cy1);
+
+                        ctx.fillStyle = '#00f5ff';
+                        ctx.font = 'bold 14px Arial';
+                        const text = `${det.class_name} ${(det.confidence*100).toFixed(1)}%`;
+                        ctx.fillText(text, cx1, cy1 > 20 ? cy1 - 5 : cy1 + 15);
+                    });
+                }
+                if (img.complete) {
+                    img.onload();
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('loadingState').style.display = 'none';
+        }
+    }
+});
+</script>
 </body></html>
