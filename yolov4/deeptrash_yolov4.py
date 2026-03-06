@@ -135,9 +135,7 @@ with open('data/valid.txt', 'w') as out:
 #we build iteratively from base config files. This is the same file shape as cfg/yolo-obj.cfg
 def file_len(fname):
   with open(fname) as f:
-    for i, l in enumerate(f):
-      pass
-  return i + 1
+    return sum(1 for _ in f)
 
 num_classes = file_len('train/_darknet.labels')
 max_batches = 100
