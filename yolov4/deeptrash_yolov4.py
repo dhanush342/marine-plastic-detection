@@ -125,7 +125,6 @@ with open('data/train.txt', 'w') as out:
     out.write('data/obj/' + img + '\n')
 
 #write the valid file (just the image list)
-import os
 
 with open('data/valid.txt', 'w') as out:
   for img in [f for f in os.listdir('valid') if f.endswith('jpg')]:
