@@ -121,14 +121,14 @@ with open('data/obj.data', 'w') as out:
 import os
 
 with open('data/train.txt', 'w') as out:
-  for img in [f for f in os.listdir('train') if f.endswith('jpg')]:
+  for img in [f.name for f in os.scandir('train') if f.is_file() and f.name.endswith('jpg')]:
     out.write('data/obj/' + img + '\n')
 
 #write the valid file (just the image list)
 import os
 
 with open('data/valid.txt', 'w') as out:
-  for img in [f for f in os.listdir('valid') if f.endswith('jpg')]:
+  for img in [f.name for f in os.scandir('valid') if f.is_file() and f.name.endswith('jpg')]:
     out.write('data/obj/' + img + '\n')
 
 #we build config dynamically based on number of classes
@@ -491,7 +491,7 @@ imShow('chart.png')
 !./darknet detector map data/obj.data cfg/custom-yolov4-tiny-detector.cfg /path/to/weights -thresh 0.50
 
 #/test has images that we can test our detector on
-test_images = [f for f in os.listdir('test') if f.endswith('.jpg')]
+test_images = [f.name for f in os.scandir('test') if f.is_file() and f.name.endswith('.jpg')]
 import random
 img_path = "test/" + random.choice(test_images);
 
