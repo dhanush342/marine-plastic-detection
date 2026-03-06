@@ -65,12 +65,14 @@ def imShow(path):
 
 # use this to upload files
 def upload():
+  import os
   from google.colab import files
   uploaded = files.upload() 
   for name, data in uploaded.items():
-    with open(name, 'wb') as f:
+    secure_name = os.path.basename(name)
+    with open(secure_name, 'wb') as f:
       f.write(data)
-      print ('saved file', name)
+      print ('saved file', secure_name)
 
 # use this to download a file  
 def download(path):
