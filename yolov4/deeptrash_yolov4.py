@@ -9,17 +9,18 @@ Original file is located at
 ## DEEP PLASTIC.
 """
 
+import subprocess
+
 # CUDA: Let's check that Nvidia CUDA drivers are already pre-installed and which version is it.
-gpu_info = !nvidia-smi
-gpu_info = '\n'.join(gpu_info)
-if gpu_info.find('failed') >= 0:
-  print('Select the Runtime > "Change runtime type" menu to enable a GPU accelerator, ')
-  print('and then re-execute this cell.')
-else:
-  print(gpu_info)# We need to install the correct cuDNN according to this output
+try:
+    gpu_info = subprocess.check_output("nvidia-smi", shell=True).decode()
+    print(gpu_info)
+except subprocess.CalledProcessError:
+    print('Select the Runtime > "Change runtime type" menu to enable a GPU accelerator, ')
+    print('and then re-execute this cell.')
 
 #take a look at the kind of GPU we have
-!nvidia-smi
+subprocess.run(["nvidia-smi"])
 
 """# Step 2: Cloning and Building Darknet
 The following cells will clone darknet from AlexeyAB's famous repository, adjust the Makefile to enable OPENCV and GPU for darknet and then build darknet.
@@ -28,21 +29,21 @@ Do not worry about any warnings when you run the '!make' cell!
 """
 
 # clone darknet repo
-!git clone https://github.com/AlexeyAB/darknet
+subprocess.run(["git", "clone", "https://github.com/AlexeyAB/darknet"])
 
 # Commented out IPython magic to ensure Python compatibility.
 # change makefile to have GPU and OPENCV enabled
-# %cd darknet
-!sed -i 's/OPENCV=0/OPENCV=1/' Makefile
-!sed -i 's/GPU=0/GPU=1/' Makefile
-!sed -i 's/CUDNN=0/CUDNN=1/' Makefile
-!sed -i 's/CUDNN_HALF=0/CUDNN_HALF=1/' Makefile
+# os.chdir("darknet")
+subprocess.run(["sed", "-i", "s/OPENCV=0/OPENCV=1/", "Makefile"])
+subprocess.run(["sed", "-i", "s/GPU=0/GPU=1/", "Makefile"])
+subprocess.run(["sed", "-i", "s/CUDNN=0/CUDNN=1/", "Makefile"])
+subprocess.run(["sed", "-i", "s/CUDNN_HALF=0/CUDNN_HALF=1/", "Makefile"])
 
 # verify CUDA
-!/usr/local/cuda/bin/nvcc --version
+subprocess.run(["/usr/local/cuda/bin/nvcc", "--version"])
 
 # make darknet (builds darknet so that you can then use the darknet executable file to run or train object detectors)
-!make
+subprocess.run(["make"])
 
 # Commented out IPython magic to ensure Python compatibility.
 # define helper functions
@@ -85,11 +86,11 @@ from google.colab import drive
 drive.mount('/content/gdrive')
 
 # this creates a symbolic link so that now the path /content/gdrive/My\ Drive/ is equal to /mydrive
-!ln -s /content/gdrive/My\ Drive/ /mydrive
-!ls /mydrive
+subprocess.run(["ln", "-s", "/content/gdrive/My Drive/", "/mydrive"])
+subprocess.run(["ls", "/mydrive"])
 
 # Commented out IPython magic to ensure Python compatibility.
-# %cd /content/darknet
+# os.chdir("/content/darknet")
 # Unzip Dataset here (type Darknet)
 
 """# Step 3: Configuring Files for Training
@@ -121,14 +122,14 @@ with open('data/obj.data', 'w') as out:
 import os
 
 with open('data/train.txt', 'w') as out:
-  for img in [f for f in os.listdir('train') if f.endswith('jpg')]:
+  for img in [f.name for f in os.scandir('train') if f.is_file() and f.name.endswith('jpg')]:
     out.write('data/obj/' + img + '\n')
 
 #write the valid file (just the image list)
 import os
 
 with open('data/valid.txt', 'w') as out:
-  for img in [f for f in os.listdir('valid') if f.endswith('jpg')]:
+  for img in [f.name for f in os.scandir('valid') if f.is_file() and f.name.endswith('jpg')]:
     out.write('data/obj/' + img + '\n')
 
 #we build config dynamically based on number of classes
@@ -449,14 +450,14 @@ def writetemplate(line, cell):
 # %cat cfg/custom-yolov4-tiny-detector.cfg
 
 # Confirm that our text files have been made in the Data folder.
-!ls data/
+subprocess.run(["ls", "data/"])
 
 #check the cv2 version, another key component of darknet
 import cv2
 cv2.__version__
 
 # Only Run to retrain the Yolov4-Tiny network from Scratch!
-!wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.conv.29
+subprocess.run(["wget", "https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.conv.29"])
 
 # This is a hack to keep Google Colab from kicking you out. Paste this in the console when you start training. This will click a button with an Id on this page and therefore you won't be considered Idle.
 
@@ -474,7 +475,7 @@ setInterval(ClickConnect,60000)
 
 # train your custom detector! (uncomment %%capture below if you run into memory issues or your Colab is crashing)
 # %%capture
-!./darknet detector train data/obj.data cfg/custom-yolov4-tiny-detector.cfg /path/to/weights -dont_show -map -clear
+subprocess.run(["./darknet", "detector", "train", "data/obj.data", "cfg/custom-yolov4-tiny-detector.cfg", "yolov4-tiny.conv.29", "-dont_show", "-map", "-clear"])
 
 """After training, you can observe a chart of how your model did throughout the training process by running the below command. It shows a chart of your average loss vs. iterations. For your model to be 'accurate' you should aim for a loss under 2."""
 
@@ -483,25 +484,25 @@ imShow('chart.png')
 
 # Commented out IPython magic to ensure Python compatibility.
 # need to set our custom cfg to test mode 
-# %cd cfg
-!sed -i 's/batch=64/batch=1/' custom-yolov4-tiny-detector.cfg
-!sed -i 's/subdivisions=16/subdivisions=1/' custom-yolov4-tiny-detector.cfg
-# %cd ..
+# os.chdir("cfg")
+subprocess.run(["sed", "-i", "s/batch=64/batch=1/", "custom-yolov4-tiny-detector.cfg"])
+subprocess.run(["sed", "-i", "s/subdivisions=16/subdivisions=1/", "custom-yolov4-tiny-detector.cfg"])
+# os.chdir("..")
 
-!./darknet detector map data/obj.data cfg/custom-yolov4-tiny-detector.cfg /path/to/weights -thresh 0.50
+subprocess.run(["./darknet", "detector", "map", "data/obj.data", "cfg/custom-yolov4-tiny-detector.cfg", "backup/custom-yolov4-tiny-detector_best.weights", "-thresh", "0.50"])
 
 #/test has images that we can test our detector on
-test_images = [f for f in os.listdir('test') if f.endswith('.jpg')]
+test_images = [f.name for f in os.scandir('test') if f.is_file() and f.name.endswith('.jpg')]
 import random
-img_path = "test/" + random.choice(test_images);
+img_path = "test/" + random.choice(test_images) if test_images else "data/dog.jpg"
 
 #test out our detector!
-!./darknet detector test data/obj.data cfg/custom-yolov4-tiny-detector.cfg backup/path/to/weights {img_path} -dont-show
+subprocess.run(f"./darknet detector test data/obj.data cfg/custom-yolov4-tiny-detector.cfg backup/custom-yolov4-tiny-detector_best.weights {img_path} -dont-show", shell=True)
 imShow('predictions.jpg')
 
 # run your custom detector with this command (upload an image to your google drive to test, thresh flag sets accuracy that detection must be in order to show it)
-!./darknet detector test data/obj.data cfg/custom-yolov4-tiny-detector.cfg /path/to/image
+subprocess.run(["./darknet", "detector", "test", "data/obj.data", "cfg/custom-yolov4-tiny-detector.cfg", "data/dog.jpg"])
 imShow('predictions.jpg')
 
-!./darknet detector demo data/obj.data cfg/custom-yolov4-tiny-detector.cfg /path/to/weights -dont_show /mydrive/OceanPlastic/videos/plastic.mp4 -i 0 -out_filename results.avi
+# subprocess.run(["./darknet", "detector", "demo", "data/obj.data", "cfg/custom-yolov4-tiny-detector.cfg", "backup/custom-yolov4-tiny-detector_best.weights", "-dont_show", "/mydrive/OceanPlastic/videos/plastic.mp4", "-i", "0", "-out_filename", "results.avi"])
 

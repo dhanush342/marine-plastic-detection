@@ -9,10 +9,13 @@ Original file is located at
 #Install Dependencies
 """
 
+import os
+import subprocess
+
 # Commented out IPython magic to ensure Python compatibility.
-!git clone https://github.com/ultralytics/yolov5  # clone repo
-!pip install -qr yolov5/requirements.txt  # install dependencies (ignore errors)
-# %cd yolov5
+subprocess.run(["git", "clone", "https://github.com/ultralytics/yolov5"])  # clone repo
+subprocess.run(["pip", "install", "-qr", "yolov5/requirements.txt"])  # install dependencies (ignore errors)
+# os.chdir("yolov5")
 
 import torch
 from IPython.display import Image, clear_output  # to display images
@@ -31,8 +34,8 @@ from google.colab import drive
 drive.mount('/content/gdrive')
 
 # this creates a symbolic link so that now the path /content/gdrive/My\ Drive/ is equal to /mydrive
-!ln -s /content/gdrive/My\ Drive/ /mydrive
-!ls /mydrive
+subprocess.run(["ln", "-s", "/content/gdrive/My Drive/", "/mydrive"])
+subprocess.run(["ls", "/mydrive"])
 
 """# Download Correctly Formatted Custom Dataset 
 
@@ -48,7 +51,7 @@ To get your data into Roboflow, follow the [Getting Started Guide](https://blog.
 
 # Commented out IPython magic to ensure Python compatibility.
 # this is the YAML file Roboflow wrote for us that we're loading into this notebook with our data
-# %cat data.yaml
+# with open('data.yaml', 'r') as f: print(f.read())
 
 """# Define Model Configuration and Architecture
 
@@ -57,7 +60,7 @@ We will write a yaml script that defines the parameters for our model like the n
 You do not need to edit these cells, but you may.
 """
 
-!pip install pyyaml
+subprocess.run(["pip", "install", "pyyaml"])
 
 # define number of classes based on YAML
 import yaml
@@ -162,13 +165,13 @@ Here, we are able to pass a number of arguments:
 # Commented out IPython magic to ensure Python compatibility.
 # # train yolov5s on custom data for 50 epochs
 # # time its performance
-# %%time
-# %cd /content/yolov5/
-# !python train.py --img 416 --batch 16 --epochs 10 --data '../data.yaml' --cfg ./models/custom_yolov5s.yaml --weights /path/to/weights --name name --cache
+# import time; start = time.time()
+# os.chdir("/content/yolov5/")
+# subprocess.run(["python", "train.py", "--img", "416", "--batch", "16", "--epochs", "10", "--data", "../data.yaml", "--cfg", "./models/custom_yolov5s.yaml", "--weights", "../yolov5su.pt", "--name", "marine_plastic", "--cache"])
 
 # Commented out IPython magic to ensure Python compatibility.
-# %cd /content/yolov5/
-!python test.py --data '../data.yaml' --img 416 --conf 0.40  --weights /path/to/weights
+# os.chdir("/content/yolov5/")
+subprocess.run(["python", "val.py", "--data", "../data.yaml", "--img", "416", "--conf", "0.40", "--weights", "../yolov5su.pt"])
 
 # Commented out IPython magic to ensure Python compatibility.
 # we can also output some older school graphs if the tensor board isn't working for whatever reason... #
@@ -182,8 +185,8 @@ Run inference with a pretrained checkpoint on contents of `test/images` folder d
 # Commented out IPython magic to ensure Python compatibility.
 # when we ran this, we saw .007 second inference time. That is 140 FPS on a TESLA P100!
 # use the best weights!
-# %cd /content/yolov5/
-!python detect.py --weights /path/to/weights --img 416 --source /path/to/images --conf 0.50
+# os.chdir("/content/yolov5/")
+subprocess.run(["python", "detect.py", "--weights", "../yolov5su.pt", "--img", "416", "--source", "../test/images", "--conf", "0.50"])
 
 #display inference on ALL test images
 #this looks much better with longer training above
