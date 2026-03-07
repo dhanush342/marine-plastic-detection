@@ -44,13 +44,19 @@ async def detect(file: UploadFile = File(...)):
     detections = []
     for r in results:
         boxes = r.boxes
-        for box in boxes:
-            b = box.xyxy[0].tolist()  # get box coordinates in (left, top, right, bottom) format
-            c = box.cls.item()
-            conf = box.conf.item()
+        if len(boxes) == 0:
+            continue
+
+        # Batched list conversions for performance
+        xyxys = boxes.xyxy.tolist()
+        clss = boxes.cls.tolist()
+        confs = boxes.conf.tolist()
+
+        for b, c, conf in zip(xyxys, clss, confs):
+            c_int = int(c)
             detections.append({
-                "class_id": int(c),
-                "class_name": model.names[int(c)],
+                "class_id": c_int,
+                "class_name": model.names[c_int],
                 "confidence": float(conf),
                 "bbox": b
             })
