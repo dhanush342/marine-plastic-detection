@@ -15,21 +15,24 @@ with patch('ultralytics.YOLO') as mock_yolo:
     # Create a mock results object
     mock_result = MagicMock()
 
-    # Create a mock box object
-    mock_box = MagicMock()
-    mock_box_tensor = MagicMock()
-    mock_box_tensor.tolist.return_value = [10.0, 10.0, 100.0, 100.0]
-    mock_box.xyxy = [mock_box_tensor]
+    # Create a mock boxes object
+    mock_boxes = MagicMock()
+    mock_boxes.__len__.return_value = 1
+    mock_boxes.__bool__.return_value = True
 
-    mock_box_cls = MagicMock()
-    mock_box_cls.item.return_value = 0.0
-    mock_box.cls = mock_box_cls
+    mock_xyxy = MagicMock()
+    mock_xyxy.tolist.return_value = [[10.0, 10.0, 100.0, 100.0]]
+    mock_boxes.xyxy = mock_xyxy
 
-    mock_box_conf = MagicMock()
-    mock_box_conf.item.return_value = 0.95
-    mock_box.conf = mock_box_conf
+    mock_cls = MagicMock()
+    mock_cls.tolist.return_value = [0.0]
+    mock_boxes.cls = mock_cls
 
-    mock_result.boxes = [mock_box]
+    mock_conf = MagicMock()
+    mock_conf.tolist.return_value = [0.95]
+    mock_boxes.conf = mock_conf
+
+    mock_result.boxes = mock_boxes
     mock_model.return_value = [mock_result]
 
     mock_yolo.return_value = mock_model
