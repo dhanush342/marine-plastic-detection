@@ -44,16 +44,20 @@ async def detect(file: UploadFile = File(...)):
     detections = []
     for r in results:
         boxes = r.boxes
-        for box in boxes:
-            b = box.xyxy[0].tolist()  # get box coordinates in (left, top, right, bottom) format
-            c = box.cls.item()
-            conf = box.conf.item()
-            detections.append({
-                "class_id": int(c),
-                "class_name": model.names[int(c)],
-                "confidence": float(conf),
-                "bbox": b
-            })
+
+        # ⚡ Bolt: Batch convert tensors to lists to avoid slow element-by-element Torch tensor iteration
+        if len(boxes) > 0:
+            bboxes = boxes.xyxy.tolist()
+            classes = boxes.cls.tolist()
+            confs = boxes.conf.tolist()
+
+            for b, c, conf in zip(bboxes, classes, confs):
+                detections.append({
+                    "class_id": int(c),
+                    "class_name": model.names[int(c)],
+                    "confidence": float(conf),
+                    "bbox": b
+                })
 
     inference_time_ms = (time.time() - start_time) * 1000
 

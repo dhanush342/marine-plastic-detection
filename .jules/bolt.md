@@ -1,0 +1,3 @@
+## 2024-05-24 - Torch Tensor Iteration Overhead in YOLO Parsing
+**Learning:** Element-by-element iteration over `Results.boxes` PyTorch tensors (e.g. calling `.item()` or `.tolist()` on individual box attributes inside a loop) causes significant Python-to-C++ boundary overhead, severely slowing down API inference time.
+**Action:** Always batch convert the entire tensors to Python lists first (e.g., `boxes.xyxy.tolist()`, `boxes.cls.tolist()`) and then iterate over them using `zip()`. When testing this pattern, mock the `Boxes` object properties to return lists directly rather than mocking an iterable of individual mock box objects.
