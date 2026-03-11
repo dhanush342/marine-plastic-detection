@@ -1,0 +1,3 @@
+## 2024-05-15 - Optimizing Ultralytics YOLO Results Parsing
+**Learning:** Iterating over Torch tensors element-by-element (e.g., inside loops with `.tolist()` or `.item()`) introduces significant overhead in Python. When parsing Ultralytics YOLO `Results.boxes`, individually accessing properties like `box.xyxy`, `box.cls`, and `box.conf` per detection causes unneeded slowdowns during API responses.
+**Action:** Always batch convert the entire tensors to Python lists first (e.g., `boxes.xyxy.tolist()`, `boxes.cls.tolist()`, `boxes.conf.tolist()`) and then iterate through the converted lists simultaneously using `zip()`. This eliminates the Torch iteration overhead and speeds up the parsing process.
