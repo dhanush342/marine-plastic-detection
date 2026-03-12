@@ -1,0 +1,3 @@
+## 2024-05-18 - Ultralytics YOLO Prediction Parsing Overhead
+**Learning:** Iterating through `Results.boxes` tensors in Ultralytics YOLO and calling `.tolist()` or `.item()` on each element individually causes significant overhead due to Torch tensor operations.
+**Action:** Always batch convert the entire tensors to Python lists first (e.g., `boxes.xyxy.tolist()`, `boxes.cls.tolist()`, `boxes.conf.tolist()`) and iterate using `zip()` to avoid this bottleneck.
