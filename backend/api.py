@@ -44,10 +44,15 @@ async def detect(file: UploadFile = File(...)):
     detections = []
     for r in results:
         boxes = r.boxes
-        for box in boxes:
-            b = box.xyxy[0].tolist()  # get box coordinates in (left, top, right, bottom) format
-            c = box.cls.item()
-            conf = box.conf.item()
+        if len(boxes) == 0:
+            continue
+
+        # Batch convert tensors to Python lists to avoid Torch tensor iteration overhead
+        xyxys = boxes.xyxy.tolist()
+        clss = boxes.cls.tolist()
+        confs = boxes.conf.tolist()
+
+        for b, c, conf in zip(xyxys, clss, confs):
             detections.append({
                 "class_id": int(c),
                 "class_name": model.names[int(c)],
